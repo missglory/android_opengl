@@ -11,9 +11,14 @@ cmake_minimum_required(VERSION 3.10.2)
 # Gradle automatically packages shared libraries with your APK.
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fno-rtti -fno-exceptions -Wall")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fno-rtti -fno-exceptions -Wall")
+
+message("-")
+message("SRC DIR " ${CMAKE_CURRENT_SOURCE_DIR})
+message("ANDROID_PLATFORM_LEVEL " ${ANDROID_PLATFORM_LEVEL})
+
 if (${ANDROID_PLATFORM_LEVEL} LESS 12)
-    message(FATAL_ERROR "OpenGL 2 is not supported before API level 11 \
+    mesage(FATAL_ERROR "OpenGL 2 is not supported before API level 11 \
                       (currently using ${ANDROID_PLATFORM_LEVEL}).")
     return()
 elseif (${ANDROID_PLATFORM_LEVEL} LESS 18)
@@ -47,29 +52,33 @@ add_library(game
 # default, you only need to specify the name of the public NDK library
 # you want to add. CMake verifies that the library exists before
 # completing its build.
-
+message("FIND LIBS:")
 find_library( # Sets the name of the path variable.
               log-lib
 
               # Specifies the name of the NDK library that
               # you want CMake to locate.
               log )
+message("log-lib " ${log-lib})
 
+find_library(gl-lib
+             ${OPENGL_LIB})
+message("gl-lib " ${gl-lib})
+find_library(glesv3
+        GLESv3)
+message("GLESv3 LIB: " ${glesv3})
+message("----------------------------------")
 
 
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
-
-
-message(OPENGLLIB ${OPENGL_LIB})
+message("OPENGLLIB " ${OPENGL_LIB})
 target_link_libraries( # Specifies the target library.
-                       native-lib
                        game
-                       ${OPENGL_LIB}
+                       ${gl-lib}
                        android
                        EGL
-                       m
                        # Links the target library to the log library
                        # included in the NDK.
                        ${log-lib} )
